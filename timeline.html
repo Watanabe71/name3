@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アニマン共有タイムライン</title>
+
     <style>
-        /* 全体のスタイル（CSS） */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f5f8fa;
             color: #14171a;
             margin: 0;
@@ -15,6 +16,7 @@
             display: flex;
             justify-content: center;
         }
+
         .container {
             width: 100%;
             max-width: 600px;
@@ -23,22 +25,52 @@
             border-left: 1px solid #e6ecf0;
             border-right: 1px solid #e6ecf0;
         }
+
         header {
             background-color: #ffffff;
             padding: 15px 20px;
             border-bottom: 1px solid #e6ecf0;
             position: sticky;
             top: 0;
-            font-weight: bold;
-            font-size: 1.2rem;
             z-index: 100;
         }
-        /* 投稿フォームのスタイル */
+
+        .header-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        /* ナビゲーション */
+        .nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav button {
+            flex: 1;
+            border: none;
+            background-color: transparent;
+            padding: 8px;
+            font-weight: bold;
+            color: #657786;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .nav button.active {
+            color: #1da1f2;
+            background-color: #e8f5fd;
+        }
+
+        /* 投稿フォーム */
         .post-form {
             padding: 20px;
             border-bottom: 8px solid #e6ecf0;
         }
-        .post-form input, .post-form textarea {
+
+        .post-form input,
+        .post-form textarea {
             width: 100%;
             border: 1px solid #ccd6dd;
             border-radius: 8px;
@@ -47,10 +79,12 @@
             font-size: 1rem;
             box-sizing: border-box;
         }
+
         .post-form textarea {
             resize: none;
             height: 80px;
         }
+
         .post-form button {
             background-color: #1da1f2;
             color: white;
@@ -61,92 +95,586 @@
             cursor: pointer;
             float: right;
         }
+
         .post-form button:hover {
             background-color: #0c85d0;
         }
+
         .clearfix::after {
             content: "";
             clear: both;
             display: table;
         }
-        /* タイムラインの投稿スタイル */
+
+        /* 投稿 */
         .post {
             padding: 15px 20px;
             border-bottom: 1px solid #e6ecf0;
         }
+
         .post .title {
             font-weight: bold;
             color: #1da1f2;
             margin-bottom: 5px;
             font-size: 1.1rem;
         }
+
         .post .text {
             margin-bottom: 10px;
             line-height: 1.5;
         }
+
+        .post-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .post .time {
             font-size: 0.8rem;
             color: #657786;
         }
+
+        /* おすすめボタン */
+        .like-button {
+            border: none;
+            background-color: transparent;
+            color: #e0245e;
+            font-size: 0.95rem;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+
+        .like-button:hover {
+            background-color: #ffeaf1;
+        }
+
+        /* ランキング */
+        #rankingPage {
+            display: none;
+        }
+
+        .ranking-header {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e6ecf0;
+        }
+
+        .ranking-header h2 {
+            margin: 0 0 5px;
+            color: #1da1f2;
+        }
+
+        .ranking-header p {
+            color: #657786;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            border-bottom: 1px solid #e6ecf0;
+            gap: 15px;
+        }
+
+        .rank {
+            width: 40px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .rank-1 {
+            color: #f5b700;
+        }
+
+        .rank-2 {
+            color: #9aa0a6;
+        }
+
+        .rank-3 {
+            color: #cd7f32;
+        }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-title {
+            font-weight: bold;
+            color: #1da1f2;
+            margin-bottom: 5px;
+        }
+
+        .ranking-text {
+            color: #657786;
+            font-size: 0.9rem;
+        }
+
+        .ranking-likes {
+            color: #e0245e;
+            font-weight: bold;
+            white-space: nowrap;
+        }
     </style>
 </head>
+
 <body>
 
 <div class="container">
-    <header>ホーム</header>
 
-    <!-- 投稿フォーム -->
-    <div class="post-form clearfix">
-        <form id="postForm">
-            <input type="text" id="workTitle" placeholder="作品名（例：呪術廻戦）" required>
-            <textarea id="recommendText" placeholder="おすすめポイントを教えてください！" required></textarea>
-            <button type="submit">投稿する</button>
-        </form>
-    </div>
+    <header>
+        <div class="header-title">アニマン</div>
 
-    <!-- タイムライン（ここに投稿が追加されます） -->
-    <div id="timeline">
-        <!-- サンプル投稿 -->
-        <div class="post">
-            <div class="title">【アニメ】葬送のフリーレン</div>
-            <div class="text">作画がとにかく綺麗で、時間の流れや寿命について考えさせられる名作です。毎話泣けます。</div>
-            <div class="time">2026/08/24 12:00</div>
+        <div class="nav">
+            <button id="homeButton" class="active">ホーム</button>
+            <button id="rankingButton">ランキング</button>
         </div>
+    </header>
+
+
+    <!-- ホーム -->
+    <div id="homePage">
+
+        <div class="post-form clearfix">
+            <form id="postForm">
+
+                <input
+                    type="text"
+                    id="workTitle"
+                    placeholder="作品名（例：呪術廻戦）"
+                    required
+                >
+
+                <textarea
+                    id="recommendText"
+                    placeholder="おすすめポイントを教えてください！"
+                    required
+                ></textarea>
+
+                <button type="submit">
+                    投稿する
+                </button>
+
+            </form>
+        </div>
+
+
+        <div id="timeline">
+
+            <!-- サンプル -->
+            <div
+                class="post"
+                data-title="葬送のフリーレン"
+                data-text="作画が綺麗で、時間の流れや寿命について考えさせられる名作です。"
+                data-likes="12"
+            >
+
+                <div class="title">
+                    【アニメ】葬送のフリーレン
+                </div>
+
+                <div class="text">
+                    作画が綺麗で、時間の流れや寿命について考えさせられる名作です。
+                </div>
+
+                <div class="post-bottom">
+
+                    <div class="time">
+                        2026/08/24 12:00
+                    </div>
+
+                    <button class="like-button">
+                        ♡ おすすめ
+                        <span class="like-count">12</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="post"
+                data-title="進撃の巨人"
+                data-text="ストーリーの伏線がすごく、最後まで一気に見たくなる作品です。"
+                data-likes="8"
+            >
+
+                <div class="title">
+                    【アニメ】進撃の巨人
+                </div>
+
+                <div class="text">
+                    ストーリーの伏線がすごく、最後まで一気に見たくなる作品です。
+                </div>
+
+                <div class="post-bottom">
+
+                    <div class="time">
+                        2026/08/25 18:30
+                    </div>
+
+                    <button class="like-button">
+                        ♡ おすすめ
+                        <span class="like-count">8</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="post"
+                data-title="SPY×FAMILY"
+                data-text="コメディと家族の温かさがあって気軽に楽しめます。"
+                data-likes="5"
+            >
+
+                <div class="title">
+                    【アニメ】SPY×FAMILY
+                </div>
+
+                <div class="text">
+                    コメディと家族の温かさがあって気軽に楽しめます。
+                </div>
+
+                <div class="post-bottom">
+
+                    <div class="time">
+                        2026/08/26 20:10
+                    </div>
+
+                    <button class="like-button">
+                        ♡ おすすめ
+                        <span class="like-count">5</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
+
+    <!-- ランキングページ -->
+    <div id="rankingPage">
+
+        <div class="ranking-header">
+            <h2>🏆 人気ランキング</h2>
+            <p>みんなの「おすすめ」が多い作品</p>
+        </div>
+
+        <div id="rankingList"></div>
+
+    </div>
+
 </div>
 
+
 <script>
-    // JavaScriptで動きを作る
-    const postForm = document.getElementById('postForm');
-    const timeline = document.getElementById('timeline');
 
-    // フォームが送信されたときの処理
-    postForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // 画面がリロードされるのを防ぐ
+    const postForm =
+        document.getElementById("postForm");
 
-        // 入力された値を取得
-        const title = document.getElementById('workTitle').value;
-        const text = document.getElementById('recommendText').value;
-        
-        // 現在の日時を取得
-        const now = new Date();
-        const timeString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const timeline =
+        document.getElementById("timeline");
 
-        // 新しい投稿のHTMLを作成
-        const postHTML = `
-            <div class="post">
-                <div class="title">【おすすめ】${title}</div>
-                <div class="text">${text.replace(/\n/g, '<br>')}</div>
-                <div class="time">${timeString}</div>
-            </div>
-        `;
+    const homePage =
+        document.getElementById("homePage");
 
-        // タイムラインの一番上に追加（prepend）
-        timeline.insertAdjacentHTML('afterbegin', postHTML);
+    const rankingPage =
+        document.getElementById("rankingPage");
 
-        // 入力欄を空にする
-        postForm.reset();
-    });
+    const homeButton =
+        document.getElementById("homeButton");
+
+    const rankingButton =
+        document.getElementById("rankingButton");
+
+    const rankingList =
+        document.getElementById("rankingList");
+
+
+    /* --------------------
+       投稿する
+    -------------------- */
+
+    postForm.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const title =
+                document.getElementById("workTitle").value;
+
+            const text =
+                document.getElementById("recommendText").value;
+
+
+            const now =
+                new Date();
+
+
+            const timeString =
+
+                `${now.getFullYear()}/` +
+
+                `${String(
+                    now.getMonth() + 1
+                ).padStart(2, "0")}/` +
+
+                `${String(
+                    now.getDate()
+                ).padStart(2, "0")} ` +
+
+                `${String(
+                    now.getHours()
+                ).padStart(2, "0")}:` +
+
+                `${String(
+                    now.getMinutes()
+                ).padStart(2, "0")}`;
+
+
+            const post =
+                document.createElement("div");
+
+
+            post.className = "post";
+
+            post.dataset.title = title;
+
+            post.dataset.text = text;
+
+            post.dataset.likes = 0;
+
+
+            post.innerHTML = `
+
+                <div class="title">
+                    【おすすめ】${title}
+                </div>
+
+                <div class="text">
+                    ${text.replace(/\n/g, "<br>")}
+                </div>
+
+                <div class="post-bottom">
+
+                    <div class="time">
+                        ${timeString}
+                    </div>
+
+                    <button class="like-button">
+                        ♡ おすすめ
+                        <span class="like-count">0</span>
+                    </button>
+
+                </div>
+            `;
+
+
+            timeline.prepend(post);
+
+
+            postForm.reset();
+
+        }
+    );
+
+
+    /* --------------------
+       おすすめボタン
+    -------------------- */
+
+    timeline.addEventListener(
+        "click",
+        function(event) {
+
+            const button =
+                event.target.closest(".like-button");
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const post =
+                button.closest(".post");
+
+
+            let likes =
+                Number(post.dataset.likes);
+
+
+            likes++;
+
+
+            post.dataset.likes =
+                likes;
+
+
+            button.querySelector(
+                ".like-count"
+            ).textContent = likes;
+
+        }
+    );
+
+
+    /* --------------------
+       ホーム
+    -------------------- */
+
+    homeButton.addEventListener(
+        "click",
+        function() {
+
+            homePage.style.display =
+                "block";
+
+            rankingPage.style.display =
+                "none";
+
+
+            homeButton.classList.add(
+                "active"
+            );
+
+            rankingButton.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    /* --------------------
+       ランキング
+    -------------------- */
+
+    rankingButton.addEventListener(
+        "click",
+        function() {
+
+            homePage.style.display =
+                "none";
+
+            rankingPage.style.display =
+                "block";
+
+
+            rankingButton.classList.add(
+                "active"
+            );
+
+            homeButton.classList.remove(
+                "active"
+            );
+
+
+            createRanking();
+
+        }
+    );
+
+
+    /* --------------------
+       ランキング作成
+    -------------------- */
+
+    function createRanking() {
+
+        const posts =
+            [...document.querySelectorAll(".post")];
+
+
+        posts.sort(
+            (a, b) =>
+
+                Number(b.dataset.likes) -
+
+                Number(a.dataset.likes)
+        );
+
+
+        rankingList.innerHTML = "";
+
+
+        posts.forEach(
+            function(post, index) {
+
+                const rank =
+                    index + 1;
+
+                const title =
+                    post.dataset.title;
+
+                const text =
+                    post.dataset.text;
+
+                const likes =
+                    post.dataset.likes;
+
+
+                let rankClass = "";
+
+
+                if (rank === 1) {
+                    rankClass = "rank-1";
+                }
+
+                if (rank === 2) {
+                    rankClass = "rank-2";
+                }
+
+                if (rank === 3) {
+                    rankClass = "rank-3";
+                }
+
+
+                rankingList.innerHTML += `
+
+                    <div class="ranking-item">
+
+                        <div class="rank ${rankClass}">
+                            ${rank}
+                        </div>
+
+                        <div class="ranking-info">
+
+                            <div class="ranking-title">
+                                ${title}
+                            </div>
+
+                            <div class="ranking-text">
+                                ${text}
+                            </div>
+
+                        </div>
+
+                        <div class="ranking-likes">
+                            ♥ ${likes}
+                        </div>
+
+                    </div>
+                `;
+
+            }
+        );
+
+    }
+
 </script>
 
 </body>

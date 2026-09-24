@@ -515,6 +515,10 @@
     );
 
 
+/* --------------------
+   おすすめボタン
+   1人10回まで
+-------------------- */
         /* --------------------
     おすすめボタン
     -------------------- */
@@ -526,31 +530,49 @@
             const button =
                 event.target.closest(".like-button");
 
+let myLikeCount = 0;
+const maxLikes = 10;
 
-            if (!button) {
-                return;
-            }
+timeline.addEventListener(
+    "click",
+    function(event) {
 
+        const button =
+            event.target.closest(".like-button");
 
-            const post =
-                button.closest(".post");
+        if (!button) {
+            return;
+        }
 
+        // 10回押していたら終了
+        if (myLikeCount >= maxLikes) {
+            alert("おすすめは10回までです！");
+            return;
+        }
 
-            let likes =
-                Number(post.dataset.likes);
+        const post =
+            button.closest(".post");
 
+        let likes =
+            Number(post.dataset.likes);
 
-            likes++;
+        likes++;
 
+        post.dataset.likes =
+            likes;
 
-            post.dataset.likes =
-                likes;
+        button.querySelector(
+            ".like-count"
+        ).textContent = likes;
 
+        // 自分が押した回数
+        myLikeCount++;
 
-            button.querySelector(
-                ".like-count"
-            ).textContent = likes;
-
+        console.log(
+            "残り" + (maxLikes - myLikeCount) + "回"
+        );
+    }
+);
 
             /* ここから追加 */
 

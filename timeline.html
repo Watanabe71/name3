@@ -514,21 +514,10 @@
         }
     );
 
-
 /* --------------------
    おすすめボタン
    1人10回まで
 -------------------- */
-        /* --------------------
-    おすすめボタン
-    -------------------- */
-
-    timeline.addEventListener(
-        "click",
-        function(event) {
-
-            const button =
-                event.target.closest(".like-button");
 
 let myLikeCount = 0;
 const maxLikes = 10;
@@ -568,22 +557,19 @@ timeline.addEventListener(
         // 自分が押した回数
         myLikeCount++;
 
+        // ボタンに色をつける
+        button.classList.add("liked");
+
+        // ♡ を ♥ に変更
+        button.childNodes[0].textContent =
+            "♥ おすすめ ";
+
         console.log(
             "残り" + (maxLikes - myLikeCount) + "回"
         );
+
     }
 );
-
-            /* ここから追加 */
-
-            button.classList.add("liked");
-
-            button.childNodes[0].textContent =
-                "♥ おすすめ ";
-
-        }
-    );
-
 
     /* --------------------
        ホーム

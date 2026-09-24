@@ -150,6 +150,29 @@
             background-color: #ffeaf1;
         }
 
+        /* おすすめボタンを押したとき */
+        .like-button.liked {
+            background-color: #e0245e;
+            color: white;
+            transform: scale(1.08);
+            animation: like-pop 0.3s ease;
+        }
+
+        /* 押した瞬間のアニメーション */
+        @keyframes like-pop {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.25);
+            }
+
+            100% {
+                transform: scale(1.08);
+            }
+        }
+
         /* ランキング */
         #rankingPage {
             display: none;
@@ -492,8 +515,8 @@
     );
 
 
-    /* --------------------
-       おすすめボタン
+        /* --------------------
+    おすすめボタン
     -------------------- */
 
     timeline.addEventListener(
@@ -527,6 +550,14 @@
             button.querySelector(
                 ".like-count"
             ).textContent = likes;
+
+
+            /* ここから追加 */
+
+            button.classList.add("liked");
+
+            button.childNodes[0].textContent =
+                "♥ おすすめ ";
 
         }
     );

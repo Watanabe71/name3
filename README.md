@@ -38,3 +38,16 @@ Pull Request
 Mergeしてmainに反映
 ↓
 Issue #3 完了
+
+
+
+左下の main をクリック
+「Create new branch...」 を選ぶ
+ブランチ名を feature/ranking にする
+作成すると左下が feature/ranking に変わる
+その状態で今変更した timeline.html を保存
+ブラウザでランキング機能が動くか確認
+問題なければ Commit
+GitHubに Push
+GitHubで Pull Request
+最後に mainへMerge
